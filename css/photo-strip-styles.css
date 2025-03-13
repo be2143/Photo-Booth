@@ -1,0 +1,39 @@
+body {
+    background-image: url("../images/bg.svg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: "Tahoma", sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  canvas {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  button {
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    border: 2px solid black;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  button:hover {
+    background: linear-gradient(135deg, #a8ffde, #7decb4); /* Mint gradient */
+    transform: scale(1.1);
+  }

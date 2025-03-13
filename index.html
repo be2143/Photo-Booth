@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhotoBooth</title>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="photobooth-container">
+    <div class="title-container">
+        <h1>PhotoBooth inspired by</h1>
+        <img src="images/dream-logo.png" alt="PhotoBooth Logo" class="logo">
+      </div>
+
+    <div class="countdown">3</div>      
+    <!-- Camera and Photos in the same row -->
+    <div class="camera-container">
+      <div class="camera">
+        <video id="video" autoplay></video>
+      </div>
+
+      <!-- Display taken photos here -->
+      <div class="photo" id="photo-gallery">
+        <!-- Photos will be dynamically added here -->
+      </div>
+    </div>
+
+    <button id="snapButton">Start Capturing ^^ </button>
+
+  </div>
+
+  <!-- Link to external JS file -->
+  <script src="js/script.js"></script>
+</body>
+</html>

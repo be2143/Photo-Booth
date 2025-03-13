@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Photo Preview</title>
+  <link rel="stylesheet" href="css/photo-strip-styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Your Photo Preview</h1>
+    <p>Choose Your Favorite Album</p>
+    <div class="controls">
+        <button class="style-btn" data-style="candy">Candy</button>
+        <button class="style-btn" data-style="scape">DREAM( )SCAPE</button>
+        <button class="style-btn" data-style="beatbox">Beatbox</button>
+        <button class="style-btn" data-style="istj">ISTJ</button>
+      </div>
+      
+    <div class="photo-strip-container">
+      <canvas id="photoCanvas"></canvas>
+    </div>
+
+    <button id="downloadBtn">📥 Download</button>
+  </div>
+
+  <script src="js/photo-strip.js"></script>
+</body>
+</html>
