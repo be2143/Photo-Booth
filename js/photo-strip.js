@@ -3,166 +3,132 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctx = canvas.getContext("2d");
     const downloadBtn = document.getElementById("downloadBtn");
     const styleButtons = document.querySelectorAll(".style-btn");
+    const restartBtn = document.getElementById("restartBtn");
 
+    // Load stored photos from localStorage
     const photos = JSON.parse(localStorage.getItem("capturedPhotos")) || [];
-
-    if (photos.length === 0) {
+    if (!photos.length) {
         alert("No photos found! Please take photos first.");
         window.location.href = "index.html";
         return;
     }
 
-    const scaledWidth = 270; // New image width
-    const spacing = 20;
-    const paddingTop = 30;
-    const paddingBottom = 70;
-    const paddingSides = 30;
-
-    let selectedStyle = "candy"; // Default style
-
-    const img = new Image();
-    img.src = photos[0];
-    img.onload = () => {
-        const scaleFactor = scaledWidth / img.width;
-        const scaledHeight = img.height * scaleFactor;
-
-        canvas.width = scaledWidth + paddingSides * 2;
-        canvas.height = scaledHeight * photos.length + spacing * (photos.length - 1) + paddingTop + paddingBottom;
-
-        drawPhotoStrip(scaledWidth, scaledHeight); // Initial draw
+    const CONFIG = {
+        scaledWidth: 250,
+        spacing: 15,
+        padding: { top: 20, bottom: 50, sides: 20 },
+        defaultStyle: "candy",
+        overlayImages: {
+            candy: "images/candy-frame.png",
+            scape: "images/dreamscape-frame.png",
+            beatbox: "images/beatbox-frame.png",
+            istj: "images/istj-frame.png"
+        }
     };
 
-    function drawPhotoStrip(newWidth, newHeight) {
-        // Apply selected style first
-        drawPhotos(newWidth, newHeight); // Now draw the photos (photos will be drawn after frame)
-        applyBackgroundStyle(selectedStyle, newWidth, newHeight);
-    }
+    let selectedStyle = CONFIG.defaultStyle;
+    let loadedImages = [];
+    let overlayImage = new Image();
 
-    function applyBackgroundStyle(style, newWidth, newHeight) {
-        switch (style) {
-            case "candy":
-                ctx.fillStyle = "#FFC80B"; // Candy yellow background
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Draw random small white dots
-                for (let i = 0; i < 100; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const size = Math.random() * 3 + 1;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, size, 0, Math.PI * 2);
-                    ctx.fillStyle = "white";
-                    ctx.fill();
-                }
-
-                // Now load and draw candy frame overlay (on top of the photos)
-                // const candyFrame = new Image();
-                // candyFrame.src = "images/candy-frame.png";
-                // candyFrame.onload = () => {
-                //     ctx.drawImage(candyFrame, 0, 0, canvas.width, canvas.height); // Draw the frame on top of the photos
-                // };
-                break;
-
-            case "scape":
-                ctx.fillStyle = "#1A1A1A";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // const scapeFrame = new Image();
-                // scapeFrame.src = "images/dreamscape-frame.png";
-                // scapeFrame.onload = () => {
-                //     ctx.drawImage(scapeFrame, 0, 0, canvas.width, canvas.height); // Draw the frame on top of the photos
-                // };
-                break;
-
-            case "beatbox":
-                ctx.fillStyle = "#00DAFF";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Draw random small white dots
-                for (let i = 0; i < 100; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const size = Math.random() * 3 + 1;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, size, 0, Math.PI * 2);
-                    ctx.fillStyle = "white";
-                    ctx.fill();
-                }
-
-                // const beatboxFrame = new Image();
-                // beatboxFrame.src = "images/beatbox-frame.png";
-                // beatboxFrame.onload = () => {
-                //     ctx.drawImage(beatboxFrame, 0, 0, canvas.width, canvas.height); // Draw the frame on top of the photos
-                // };
-                break;
-
-            case "istj":
-                // Base background color
-                ctx.fillStyle = "#1A1A1A";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Film camera perforation effect (Left & Right)
-                const perforationWidth = 3;  // Width of perforation
-                const perforationHeight = 15; // Height of perforation
-                const gap = 10;  // Space between perforations
-                const padding = 10; // Distance from the frame edges
-
-                ctx.fillStyle = "#FEAF28"; // Perforation color
-                ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-                ctx.shadowBlur = 3;
-
-                // Left & Right perforations only
-                for (let y = padding; y + perforationHeight <= canvas.height - padding; y += perforationHeight + gap) {
-                    ctx.fillRect(padding, y, perforationWidth, perforationHeight); // Left side
-                    ctx.fillRect(canvas.width - padding - perforationWidth, y, perforationWidth, perforationHeight); // Right side
-                }
-
-                // Reset shadow for future drawing
-                ctx.shadowBlur = 0;
-                ctx.shadowColor = "transparent";
-                // const istjFrame = new Image();
-                // istjFrame.src = "images/istj-frame.png";
-                // istjFrame.onload = () => {
-                //     ctx.drawImage(istjFrame, 0, 0, canvas.width, canvas.height); // Draw the frame on top of the photos
-                // };
-                break;
-
-        }
-        // Copyright text
-        const text = "© 2025 BE";
-        ctx.font = "9px Tahoma"; // Set font
-        ctx.fillStyle = "white"; // Set text color
-        ctx.textAlign = "right"; // Align text to the right
-        ctx.fillText(text, canvas.width - 14, canvas.height - 10); // Position it in the bottom right
-    }
-
-    function drawPhotos(newWidth, newHeight) {
-        let yOffset = paddingTop;
-        photos.forEach((photoSrc) => {
+    function preloadImages(photoSrcArray, callback) {
+        let loadedCount = 0;
+        photoSrcArray.forEach((photoSrc, index) => {
             const img = new Image();
             img.src = photoSrc;
             img.onload = () => {
-                ctx.drawImage(img, paddingSides, yOffset, newWidth, newHeight); // Draw the image
-                yOffset += newHeight + spacing;
+                loadedImages[index] = img;
+                loadedCount++;
+                if (loadedCount === photoSrcArray.length) {
+                    callback();
+                }
             };
         });
     }
 
-    // Listen for style button clicks
-    styleButtons.forEach((button) => {
-        button.addEventListener("click", (e) => {
+    function drawPhotoStrip() {
+        applyBackgroundStyle(selectedStyle);
+        drawPhotos();
+        addOverlay(); // Automatically adds overlay when drawing the strip
+    }
+
+    function applyBackgroundStyle(style) {
+        const styles = {
+            candy: "#FFC80B",
+            scape: "#1A1A1A",
+            beatbox: "#00DAFF",
+            istj: "#FEAF28"
+        };
+
+        ctx.fillStyle = styles[style] || "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (style === "candy" || style === "beatbox") drawDots();
+        drawCopyright();
+    }
+
+    function drawDots() {
+        for (let i = 0; i < 100; i++) {
+            ctx.beginPath();
+            ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 3 + 1, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
+        }
+    }
+
+    function drawCopyright() {
+        ctx.font = "9px Tahoma";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "right";
+        ctx.fillText("© 2025 BE", canvas.width - 14, canvas.height - 10);
+    }
+
+    function drawPhotos() {
+        let yOffset = CONFIG.padding.top;
+        loadedImages.forEach(img => {
+            const scaleFactor = CONFIG.scaledWidth / img.width;
+            const scaledHeight = img.height * scaleFactor;
+            ctx.drawImage(img, CONFIG.padding.sides, yOffset, CONFIG.scaledWidth, scaledHeight);
+            yOffset += scaledHeight + CONFIG.spacing;
+        });
+    }
+
+    // function addOverlay() {
+    //     const overlaySrc = CONFIG.overlayImages[selectedStyle];
+    //     if (!overlaySrc) return;
+
+    //     overlayImage.src = overlaySrc;
+    //     overlayImage.onload = () => {
+    //         ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
+    //     };
+    // }
+
+    // Event Listeners
+    styleButtons.forEach(button => {
+        button.addEventListener("click", e => {
             selectedStyle = e.target.dataset.style;
-            drawPhotoStrip(scaledWidth, img.height * (scaledWidth / img.width)); // Redraw with selected style
+            drawPhotoStrip(); // Redraws with new overlay
         });
     });
 
-    // Download photo strip
     downloadBtn.addEventListener("click", () => {
         const link = document.createElement("a");
         link.download = "photo-strip.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
+    });
+
+    restartBtn.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    // Preload images before drawing
+    preloadImages(photos, () => {
+        const scaleFactor = CONFIG.scaledWidth / loadedImages[0].width;
+        const scaledHeight = loadedImages[0].height * scaleFactor;
+
+        canvas.width = CONFIG.scaledWidth + CONFIG.padding.sides * 2;
+        canvas.height = (scaledHeight + CONFIG.spacing) * photos.length - CONFIG.spacing + CONFIG.padding.top + CONFIG.padding.bottom;
+
+        drawPhotoStrip();
     });
 });
