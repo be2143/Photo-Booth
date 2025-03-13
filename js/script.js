@@ -72,6 +72,6 @@ function takePhoto() {
 
 // Capture three photos when button is clicked
 snapButton.addEventListener('click', () => {
-  startCountdownAndTakePhotos(4);
+  startCountdownAndTakePhotos(3);
   snapButton.disabled = true;
 });

@@ -17,13 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scaledWidth: 250,
         spacing: 15,
         padding: { top: 20, bottom: 50, sides: 20 },
-        defaultStyle: "candy",
-        overlayImages: {
-            candy: "images/candy-frame.png",
-            scape: "images/dreamscape-frame.png",
-            beatbox: "images/beatbox-frame.png",
-            istj: "images/istj-frame.png"
-        }
+        defaultStyle: "candy"
     };
 
     let selectedStyle = CONFIG.defaultStyle;
@@ -48,15 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawPhotoStrip() {
         applyBackgroundStyle(selectedStyle);
         drawPhotos();
-        addOverlay(); // Automatically adds overlay when drawing the strip
     }
 
     function applyBackgroundStyle(style) {
         const styles = {
             candy: "#FFC80B",
-            scape: "#1A1A1A",
+            scape: "#B10A14",
             beatbox: "#00DAFF",
-            istj: "#FEAF28"
+            istj: "#1A1A1A"
         };
 
         ctx.fillStyle = styles[style] || "#FFFFFF";
@@ -92,27 +85,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // function addOverlay() {
-    //     const overlaySrc = CONFIG.overlayImages[selectedStyle];
-    //     if (!overlaySrc) return;
-
-    //     overlayImage.src = overlaySrc;
-    //     overlayImage.onload = () => {
-    //         ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
-    //     };
-    // }
-
     // Event Listeners
     styleButtons.forEach(button => {
         button.addEventListener("click", e => {
             selectedStyle = e.target.dataset.style;
-            drawPhotoStrip(); // Redraws with new overlay
+            drawPhotoStrip();
         });
     });
 
     downloadBtn.addEventListener("click", () => {
         const link = document.createElement("a");
-        link.download = "photo-strip.png";
+        link.download = "photobooth-be.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
     });

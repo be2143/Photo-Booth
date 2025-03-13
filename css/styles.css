@@ -82,6 +82,7 @@ video {
 }
 
 button {
+  background-color: white;
   padding: 12px 24px;
   font-size: 18px;
   font-weight: bold;
