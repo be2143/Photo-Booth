@@ -13,7 +13,7 @@ This is a fun and interactive web app that lets the users create custom photo st
 3. **Download** – Save your customized photo strip!  
 
 ## 🔗 Live Demo  
-[be2143.github.io/photobooth/]([https://be2143.github.io/photobooth/](https://be2143.github.io/Photo-Booth/))  
+[be2143.github.io/photobooth](https://be2143.github.io/Photo-Booth/)
 
 ## 🛠️ Technologies Used  
 - HTML  
