@@ -4,7 +4,7 @@ const video = document.getElementById('video');
 const snapButton = document.getElementById('snapButton');
 
 // Access the camera
-navigator.mediaDevices.getUserMedia({ video: true })
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
   .then(stream => {
     video.srcObject = stream;
   })
@@ -59,12 +59,16 @@ function takePhoto() {
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+
+  // Flip the image before drawing
+  context.translate(canvas.width, 0); // Move the context to the right
+  context.scale(-1, 1); // Flip horizontally
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   const imgSrc = canvas.toDataURL('image/png');
-  capturedPhotos.push(imgSrc); // Store image
+  capturedPhotos.push(imgSrc);
 
-  // Display in gallery (optional)
+  // Display in gallery
   const img = document.createElement('img');
   img.src = imgSrc;
   photoGallery.appendChild(img);
