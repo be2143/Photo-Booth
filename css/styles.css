@@ -46,7 +46,8 @@ body {
 }
 
 video {
-  transform: scaleX(-1); Flip the video horizontally
+  /* Flip the video horizontally */
+  transform: scaleX(-1); 
   width: 500px;
   border: 2px solid #333;
   border-radius: 8px;

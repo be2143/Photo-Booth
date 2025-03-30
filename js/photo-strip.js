@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const CONFIG = {
         scaledWidth: 250,
         spacing: 15,
-        padding: { top: 20, bottom: 50, sides: 20 },
+        padding: { top: 15, bottom: 50, sides: 30 },
         defaultStyle: "candy"
     };
 
@@ -117,9 +117,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawPhotos() {
         let yOffset = CONFIG.padding.top;
         loadedImages.forEach(img => {
-            const scaleFactor = CONFIG.scaledWidth / img.width;
+            const scaleFactor = Math.min(CONFIG.scaledWidth / img.width, (canvas.height - CONFIG.padding.top - CONFIG.padding.bottom) / img.height);
+            const scaledWidth = img.width * scaleFactor;
             const scaledHeight = img.height * scaleFactor;
-            ctx.drawImage(img, CONFIG.padding.sides, yOffset, CONFIG.scaledWidth - CONFIG.padding.sides, scaledHeight);
+
+            const xOffset = (canvas.width / 2 - scaledWidth) / 2; // Center the image horizontally
+            ctx.drawImage(img, xOffset, yOffset, scaledWidth, scaledHeight);
             yOffset += scaledHeight + CONFIG.spacing;
         });
     }
